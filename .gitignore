@@ -1,0 +1,7 @@
+#Environments variables 
+.env
+
+#Python virtual environment
+.venv
+
+.DS_Store
