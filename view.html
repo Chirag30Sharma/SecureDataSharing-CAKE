@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #4a89dc;
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
+        }
+        .card-body {
+            padding: 30px;
+        }
+        h1 {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .form-label {
+            font-weight: 500;
+            color: #34495e;
+        }
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #bdc3c7;
+            padding: 10px 15px;
+        }
+        .btn-primary {
+            background-color: #4a89dc;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            background-color: #3d7ac8;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        .document-info {
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-5">View Document</h1>
+        <div class="card">
+            <div class="card-header">
+                <h2 class="mb-0">Document Details</h2>
+            </div>
+            <div class="card-body">
+                <div class="document-info">
+                    <p><strong>Document ID:</strong> {{ document.id }}</p>
+                    <p><strong>Owner:</strong> {{ document.owner }}</p>
+                    <p><strong>Policy:</strong> {{ document.encryption_policy }}</p>
+                </div>
+                <form method="POST">
+                    {% if document.encryption_policy == 'AES' %}
+                    <div class="mb-3">
+                        <label for="key" class="form-label">Enter Decryption Key:</label>
+                        <input type="text" class="form-control" id="key" name="key" required>
+                    </div>
+                    {% elif document.encryption_policy == 'ABE' %}
+                    <div class="mb-3">
+                        <label for="attributes" class="form-label">Enter Your Attributes:</label>
+                        <input type="text" class="form-control" id="attributes" name="attributes" placeholder="Enter comma-separated attributes" required>
+                        <small class="form-text text-muted">Example: admin,finance,hr</small>
+                    </div>
+                    {% elif document.encryption_policy == 'SHA256' %}
+                    <div class="mb-3">
+                        <label for="key" class="form-label">Enter Verification Key:</label>
+                        <input type="text" class="form-control" id="key" name="key" required>
+                    </div>
+                    {% endif %}
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            {% if document.encryption_policy == 'SHA256' %}
+                            Verify and View Hash
+                            {% else %}
+                            Download Decrypted Document
+                            {% endif %}
+                        </button>
+                    </div>
+                </form>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="mt-4">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Document List</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
